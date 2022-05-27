@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demoinaction.mybatis.model.mapper.EmailAttachmentMapper">
+
+
+    <resultMap id="BaseResultMap" type="com.demoinaction.mybatis.model.po.EmailAttachmentPo">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="sendFrom" property="sendFrom" jdbcType="VARCHAR"/>
+        <result column="fileName" property="fileName" jdbcType="VARCHAR"/>
+        <result column="fileId" property="fileId" jdbcType="VARCHAR"/>
+        <result column="file" property="file" jdbcType="BLOB" typeHandler="org.apache.ibatis.type.BlobTypeHandler"></result>
+    </resultMap>
+
+<!--    <sql id="allUser" >-->
+<!--        select * from [user];-->
+<!--    </sql>-->
+
+    <!--1. flushcache, usecache 二级缓存
+      -->
+    <!--2. resultType resultMap
+          都表述数据将结果映射
+          resultMap  可以对数据进行映射转换，比如字段名称 field_id 转换你为id
+          对于0-1布尔类型，可以通过typeHandler 进行类型转换映射。
+          resultType 目标结果类型，直接对接结果
+      -->
+     <!--3. resultSets resultSetType 对表查询，多结果集
+        比如夺标查询返回
+        select * from Student
+        select * from Class
+      -->
+     <!--4. resultOrdered ？
+      -->
+     <!--5. fetch 查询大小
+     -->
+    <!---6. statementType  存储过程，普通查询执行方式
+    statement 直接执行sql
+    prepared 预处理
+    callable 执行存储过程
+    -->
+    <select id="findByFileId"
+            resultMap="BaseResultMap">
+        select id,sendFrom,fileId,fileName,file from EmailAttachment where fileId=#{fileId}
+    </select>
+
+    <!--1. 设置逐渐自增id, 这三个字段组合一起使用，指明自增id是那个
+      useGeneratedKeys="true"
+            keyProperty="id" 目标主键
+            keyColumn="id"
+      -->
+    <!--2. 多数据库类型支持
+      多种数据库支持，如果是需要实现数据在多类数据库查询，使用databaseId区分，查询会适配
+      使用databaseId 要对应实现databaseIdProvider接口
+      databaseId="mysql"
+      databaseId="sqlserver"
+      -->
+    <!--3. 多数据库类型支持
+      多种数据库支持，如果是需要实现数据在多类数据库查询，使用databaseId区分，查询会适配
+      使用databaseId 要对应实现databaseIdProvider接口
+      databaseId="mysql"
+      databaseId="sqlserver"
+      -->
+     <!--4. flushCache
+
+       缓存通常会分为两类，一级缓存和二级缓存
+       一级缓存基于SqlSession链接，session中间不共享； hashmap。 默认会对每个服务开启一级缓存，
+       任何一次执行update delete insert都会清理一级缓存，关闭链接缓存也不存在
+       二级缓存在多个SqlSession中间共享 flushCache 默认是false , 任何时候都不会清楚本地缓存和二级缓存
+       useCache 将数据查询结果用在二级缓存
+     -->
+     <!--5. lang 解析，语言解析。 自定义语法解析机制
+         比如有的插入语句，陷入对象复杂，要写很长的Sql语句，那字段一个解析方法 languageDriver
+       https://blog.csdn.net/w_yunlong/article/details/79201509-->
+    <!--6. parameterType parameterMap
+          parameterMap 使用目的和resultMap一致，但不推荐使用，建议直接使用parameterType
+          直接映射到结果，不再对应映射关系
+          map  拼写使用#{}
+          type 拼写使用${}
+      -->
+    <!--7. timeout 会话执行超时时间 单位秒
+     -->
+    <insert id="insertEmailAttachment" parameterType="com.demoinaction.mybatis.model.po.EmailAttachmentPo"
+            useGeneratedKeys="true"
+            keyProperty="id"
+            keyColumn="id">
+        INSERT INTO `EmailAttachment` (`sendFrom`,`fileId`,`fileName`,`file`)
+        VALUES
+            (#{sendFrom},#{fileId}, #{fileName},#{file});
+    </insert>
+
+    <!--1. useGeneratedKeys ？
+        获取对应更新逐渐？
+    -->
+<!--    <update id="" useGeneratedKeys="">-->
+<!--        -->
+<!--    </update>-->
+
+<!--    <update id="addMoney" parameterType="java.util.Map">-->
+<!--        update money set money=money+#{money} where id=#{id}-->
+<!--    </update>-->
+
+</mapper>
